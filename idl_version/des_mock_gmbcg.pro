@@ -66,7 +66,7 @@ pro des_mock_gmbcg,cat_dir,gal,patch,version
     inok=inok[bright]
 
     num=long(n_elements(inok))
-    srad=1./angdist_lambda(gal[inok].photoz) 
+    srad=double(1./angdist_lambda(gal[inok].photoz)) 
 
     depth=10
     htm_match,gal[inok].ra,gal[inok].dec,gal.ra,gal.dec,srad,ind1,ind2,dist,maxmatch=3000,depth=depth ;dist in radian
