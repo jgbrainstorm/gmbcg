@@ -69,7 +69,7 @@ pro des_mock_gmbcg,cat_dir,gal,patch,version
     srad=1./angdist_lambda(gal[inok].photoz) 
 
     depth=10
-    htm_find_neighbors,depth,gal[inok].ra,gal[inok].dec,gal.ra,gal.dec,srad,ind1,ind2,dist,/output_dist ;dist in radian
+    htm_match,gal[inok].ra,gal[inok].dec,gal.ra,gal.dec,srad,ind1,ind2,dist,maxmatch=3000,depth=depth ;dist in radian
    
     dmag=gal[inok[ind1]].omag[3]-gal[ind2].omag[3] ; use zmag to compare the magnitude
     in=where(dmag le 0 and abs(gal[inok[ind1]].photoz-gal[ind2].photoz) le 0.2 and gal[ind2].omag[2] le gal[inok[ind1]].lim_i)
