@@ -1,0 +1,11 @@
+pro readconfig,filename,inputdir,catdir,radius
+
+    openr,1,filename
+    h=strarr(5)
+    readf,1,h
+    close,1
+inputdir=strmid(h[2],9)
+catdir=strmid(h[3],7)
+radius=float(strmid(h[4],7))
+return
+end

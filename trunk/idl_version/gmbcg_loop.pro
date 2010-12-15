@@ -1,10 +1,14 @@
 ;This loop call the cluster finder main engine. 
 
-pro gmbcg_loop,input_dir,cat_dir,truth=truth
+pro gmbcg_loop,input_dir,cat_dir,radius,truth=truth
 
+    ;input_dir='/data/des_mock_catalog/v2.13/original_cat/'
+    ;cat_dir='/data/des_mock_catalog/v2.13/gmbcg_cluster/newsvn/'
+    
+   ; readconfig,filename,input_dir,cat_dir,srad
 
-    input_dir='/archive/staging/DES/SIMULATIONS/wechsler/v2.13/'
-    cat_dir='/data/des_mock_catalog/v2.13/gmbcg_cluster/newsvn/'
+   ; input_dir='/archive/staging/DES/SIMULATIONS/wechsler/v2.13/'
+   ; cat_dir='/archive/staging/DES/SIMULATIONS/wechsler/v2.13/'
     version = 1.0
     if keyword_set(truth) then file=findfile(input_dir+'DES_Mock_v2.13_Baseline_truth*.fit') else file=findfile(input_dir+'DES_Mock_v2.13_Baseline_0*.fit')  
     for patch=0,1 do begin
@@ -60,7 +64,7 @@ pro gmbcg_loop,input_dir,cat_dir,truth=truth
         str.lim_i=limi(str.photoz)
         gal=str[where(str.photoz ge 0.1 and str.photoz le 1.0)]
             
-        des_mock_gmbcg,cat_dir,gal,patch,version
+        des_mock_gmbcg,cat_dir,gal,radius,patch,version
       
     
     endfor
