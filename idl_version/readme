@@ -2,6 +2,8 @@ this file tells how to run the gmbcg cluster finder.
 Jiangang Hao
 12/14/10
 
+0. The input catalog should be in fit file format. Exactly specified as here:
+https://sites.google.com/site/descwg/Home/des-cluster-finders/cluster-runs/mock_format
 
 1. in the config file, change the input directory and output directory. Please do not add any space when you do the changes. Just replace the directory part.
 
