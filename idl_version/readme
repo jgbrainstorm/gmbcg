@@ -3,7 +3,11 @@ Jiangang Hao
 12/14/10
 
 0. The input catalog should be in fit file format. Exactly specified as here:
-https://sites.google.com/site/descwg/Home/des-cluster-finders/cluster-runs/mock_format
+https://sites.google.com/site/descwg/Home/des-cluster-finders/cluster-runs/mock_format.
+
+However, if you want to run on the truth table, you need to change the rungmbcg.pro file to use the one with /truth keyword. 
+
+#---------the following is the directions about how to run it--------------
 
 1. in the config file, change the input directory and output directory. Please do not add any space when you do the changes. Just replace the directory part.
 
