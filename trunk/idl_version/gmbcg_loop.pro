@@ -11,7 +11,8 @@ pro gmbcg_loop,input_dir,cat_dir,radius,truth=truth
    ; cat_dir='/archive/staging/DES/SIMULATIONS/wechsler/v2.13/'
     version = 1.0
     if keyword_set(truth) then file=findfile(input_dir+'DES_Mock_v2.13_Baseline_truth*.fit') else file=findfile(input_dir+'DES_Mock_v2.13_Baseline_0*.fit')  
-    for patch=0,1 do begin
+    
+    for patch=0,n_elements(file)-1 do begin
         print,patch
         
         gal=mrdfits(file[patch],1)
