@@ -7,7 +7,7 @@
 function percolate, bg
 
 ;----step 1 0.25 mpc merge-----------------
-    srad=0.1/angdist_lambda(bg.photoz)
+    srad=double(0.1/angdist_lambda(bg.photoz))
     depth=10
     ; htm_find_neighbors,depth,bg.ra,bg.dec,bg.ra,bg.dec,srad,ind1,ind2,dist,/output_dist
     htm_match,bg.ra,bg.dec,bg.ra,bg.dec,srad,ind1,ind2,dist,maxmatch=3000,depth=depth ;dist in radian
@@ -53,7 +53,7 @@ function percolate, bg
 
  function percolate_r200,bg
    
-    srad=1./angdist_lambda(bg.photoz)
+    srad=double(1./angdist_lambda(bg.photoz))
 
     depth=10
     ;htm_find_neighbors,depth,bg.ra,bg.dec,bg.ra,bg.dec,srad,ind1,ind2,dist,/output_dist
