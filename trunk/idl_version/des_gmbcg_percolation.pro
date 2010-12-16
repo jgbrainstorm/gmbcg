@@ -7,9 +7,10 @@
 function percolate, bg
 
 ;----step 1 0.25 mpc merge-----------------
-    srad=0.2/angdist_lambda(bg.photoz)
+    srad=0.1/angdist_lambda(bg.photoz)
     depth=10
-    htm_find_neighbors,depth,bg.ra,bg.dec,bg.ra,bg.dec,srad,ind1,ind2,dist,/output_dist
+    ; htm_find_neighbors,depth,bg.ra,bg.dec,bg.ra,bg.dec,srad,ind1,ind2,dist,/output_dist
+    htm_match,bg.ra,bg.dec,bg.ra,bg.dec,srad,ind1,ind2,dist,maxmatch=3000,depth=depth ;dist in radian
     dmag=bg[ind1].omag[3]-bg[ind2].omag[3]
     in=where(dmag lt 0)
     in1=ind1[in]
@@ -55,7 +56,8 @@ function percolate, bg
     srad=1./angdist_lambda(bg.photoz)
 
     depth=10
-    htm_find_neighbors,depth,bg.ra,bg.dec,bg.ra,bg.dec,srad,ind1,ind2,dist,/output_dist
+    ;htm_find_neighbors,depth,bg.ra,bg.dec,bg.ra,bg.dec,srad,ind1,ind2,dist,/output_dist
+    htm_match,bg.ra,bg.dec,bg.ra,bg.dec,srad,ind1,ind2,dist,maxmatch=3000,depth=depth ;dist in radian
     dmag=bg[ind1].omag[3]-bg[ind2].omag[3]
     in=where(dmag lt 0)
     in1=ind1[in]
@@ -106,20 +108,6 @@ pro des_gmbcg_percolation,catdir,version
     bcg=bcg[where(bcg.ngals le 300)]
     bcg.used = 0
 
-  ;------- step 0 ---remove junks----------
-
-   
-   ; bcg=bcg[ok]
- 
-   ; bcg1com=bcg[where(bcg.gm_nn eq 1 and ((bcg.gm_gmr_wdh gt 0 and bcg.gm_gmr_wdh le 0.12) or (bcg.gm_rmi_wdh gt 0 and bcg.gm_rmi_wdh le 0.12)) and bcg.gm_scaled_ngals ge 15 and bcg.bcglh ge 1 and bcg.nfw_lh ge 10)]
-
-  
-  ;  bcg2com=bcg[where(bcg.gm_nn eq 2)]   
- 
-  ;  b1=percolate(bcg1com)
-  ;  b2=percolate(bcg2com)
-
-  ;  b=[b1,b2]
     bcg=percolate(bcg)
     bcg.used=0
     bg=percolate_r200(bcg)
