@@ -26,5 +26,5 @@ pro gmbcg_des_member_combine,cat_dir,version
     endfor
    
     mwrfits,tp,cat_dir+'des_mock_v'+ntostr(version,4)+'_gmbcg_Hao.fit'
-
+    return
 end
