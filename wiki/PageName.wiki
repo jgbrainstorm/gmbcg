@@ -2,24 +2,5 @@
 
 == Configuration ==
 
-   * gmbcg_loop.pro
-     {{{
-       input_dir='/somewhere/'    
-       cat_dir='/some where else/' 
-                                                                     
-     }}}
-
-==Tunable parameters:==
- * In gmbcg_loop.pro: set the redshift divides of different color ridgeline
- {{{
-       x_gr=where(str.photoz le 0.35)
-       x_ri=where(str.photoz gt 0.35 and str.photoz le 0.7)  
-       x_iz=where(str.photoz gt 0.7 and str.photoz le 1.0)              
-       x_zy=where(str.photoz gt 1.0)      
-                                                                
-}}}
-
-  * In des_mock_gmbcg.pro
-{{{
-   srad=1./angdist_lambda(gal[inok].photoz)  ;1.0 is the 1 Mpc searching aperture
-}}}
+   * In the config file, you need to specify the input files directory and output catalogs' directory. 
+   * You can also specify the search aperture size (Mpc)
