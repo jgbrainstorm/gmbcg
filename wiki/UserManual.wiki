@@ -1,0 +1,3 @@
+=GMBCG cluster finder user manual=
+
+See the readme file in the package.
