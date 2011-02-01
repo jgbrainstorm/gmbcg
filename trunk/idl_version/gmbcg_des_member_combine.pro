@@ -14,7 +14,7 @@ pro gmbcg_des_member_combine,cat_dir,version
         bm=mrdfits(bmf[i],1)
         add_tags,bm,['rank'],['0L'],bmb
         bm=0
-        close_match_radec,bg.ra,bg.dec,bmb.bcgra,bmb.bcgdec,i1,i2,0.0004,1
+        close_match_radec,bg.ra,bg.dec,bmb.bcgra,bmb.bcgdec,i1,i2,0.0004,10000
         bmb[i2].rank=bg[i1].rank
         nm=n_elements(i2)
         tmp=create_struct('rank',0L,'id',0L)
