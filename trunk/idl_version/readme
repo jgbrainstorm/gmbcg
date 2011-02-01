@@ -17,3 +17,18 @@ However, if you want to run on the truth table, you need to change the rungmbcg.
 
 4. It is done!
 
+#-------output files-------
+
+There are several output files:
+       des_mock_v1.00_BCG_blended_gmbcg_v2.5.fit
+       des_mock_v1.00_BCG_gmbcg_v2.5.fit
+       des_mock_v1.00_BCG_gmbcg_v2.5_stripe_0.fit
+       des_mock_v1.00_BCGMB_gmbcg_v2.5_stripe_0.fit
+       des_mock_v1.00_gmbcg_Hao.fit
+
+Only the des_mock_v1.00_gmbcg_Hao.fit is for the analysis pipeline. HDU1 is for the BCG list. HDU 2 is for members. HDU0 is nothing. 
+See: https://sites.google.com/site/descwg/Home/des-cluster-finders/cluster-runs/mock_format
+
+for details of the format. 
+
+-Jiangang 2/1/11
