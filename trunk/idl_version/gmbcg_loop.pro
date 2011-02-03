@@ -1,6 +1,6 @@
 ;This loop call the cluster finder main engine. 
 
-pro gmbcg_loop,input_dir,cat_dir,radius
+pro gmbcg_loop,input_dir,cat_dir,radius,truth=truth
 
     ;input_dir='/data/des_mock_catalog/v2.13/original_cat/'
     ;cat_dir='/data/des_mock_catalog/v2.13/gmbcg_cluster/newsvn/'
