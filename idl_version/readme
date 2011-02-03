@@ -2,6 +2,11 @@ this file tells how to run the gmbcg cluster finder.
 Jiangang Hao
 12/14/10
 
+#------------------------------------#
+dependency: sdssidl, IDL Astronomy
+#-----------------------------------#
+
+
 0. The input catalog should be in fit file format. Exactly specified as here:
 https://sites.google.com/site/descwg/Home/des-cluster-finders/cluster-runs/mock_format.
 
