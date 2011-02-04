@@ -11,7 +11,7 @@ pro gmbcg_des_member_combine,cat_dir,version
     bmb[i2].rank=bg[i1].rank
     nm=n_elements(i2)
     tp=create_struct('rank',0L,'id',0L)
-    tp=replicate(tmp,nm)
+    tp=replicate(tp,nm)
     tp.rank=bmb[i2].rank
     tp.id=long(bmb[i2].objid)
     bmb=0
