@@ -1,4 +1,4 @@
-;This loop call the cluster finder main engine. 
+ls;This loop call the cluster finder main engine. 
 
 pro gmbcg_loop,input_dir,cat_dir,radius,truth=truth
 
