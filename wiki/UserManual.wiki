@@ -7,7 +7,7 @@ The following tells how to run the gmbcg cluster finder. Jiangang Hao 12/14/10
 0. The input catalog should be in fit file format. Exactly specified as here:
 
     * ID: A unique id # for that galaxy
-    * OMAG: The observed DES magnitudes. Should be an array of [g,r,i,z,Y] magnitudes
+    * OMAG: The observed DES magnitudes. Should be an array of g,r,i,z,Y magnitudes
     * OMAGERR: Estimated photometric errors for each band.
     * RA: Galaxy position.
     * DEC: Galaxy position.
