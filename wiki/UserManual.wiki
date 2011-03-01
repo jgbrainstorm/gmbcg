@@ -11,8 +11,7 @@ The following tells how to run the gmbcg cluster finder. Jiangang Hao 12/14/10
     * OMAGERR: Estimated photometric errors for each band.
     * RA: Galaxy position.
     * DEC: Galaxy position.
-    * PHOTOZ: Estimated photo-z based using a gaussian PDF with σ = 0.03/(1+z).
-
+    * PHOTOZ: Estimated photo-z based using other methods
 
 #---------the following is the directions about how to run it--------------
 
