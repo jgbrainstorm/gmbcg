@@ -1,6 +1,0 @@
-=GMBCG cluster finder user manual=
-
-== Configuration ==
-
-   * In the config file, you need to specify the input files directory and output catalogs' directory. 
-   * You can also specify the search aperture size (Mpc)
