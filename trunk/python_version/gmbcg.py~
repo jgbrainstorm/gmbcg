@@ -1,0 +1,30 @@
+"""
+This is the python implementation of GMBCG using the radially weighted ECGMM.
+J. Hao @ Fermilab
+5/10/2011
+"""
+
+import numpy as np
+import pyfits as pf
+import pylab as pl
+import esutil as es
+import ecgmmPy as gmm
+import rwecgmmPy as rwgmm
+import scipy.stats as sts
+import glob as gl
+
+
+#-----0.4L* in i-band ---------
+def limi(x):
+    A=np.exp(3.1638)
+    k=0.1428
+    lmi=A*x**k
+    return(lmi)
+
+#-----setup catalog directories---
+InputCatDir = 'input dir'
+OutputCatDir = 'output dir'
+
+galF = gl.glob(InputCatDir+'/*.fit')
+NF = len(galF)
+
