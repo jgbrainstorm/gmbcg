@@ -1,3 +1,7 @@
 # this is the configuration file for gmbcg
 # you need to specify input catalog directory and output catalog directory
-
+# Note: do not allow extra space when you replace the directories.
+inputdir=/archive/staging/DES/SIMULATIONS/wechsler/v2.13/
+catdir=/archive/staging/DES/SIMULATIONS/wechsler/v2.13/
+radius=1.0
+truth=0
