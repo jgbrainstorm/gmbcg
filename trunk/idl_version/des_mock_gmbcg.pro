@@ -107,7 +107,7 @@ pro des_mock_gmbcg,cat_dir,gal,radius,patch,version
               
                 mu=[hquantile(gal[in2[gg]].gmr,3.),hquantile(gal[in2[gg]].gmr,0.8)]
                 sigma=[0.04,0.3]
-                gmm_em_2com_err,gal[in2[gg]].gmr,gal[in2[gg]].gmr_err,alpha,mu,sigma,/aic,/robust
+                gmm_em_2com_err,gal[in2[gg]].gmr,gal[in2[gg]].gmr_err,alpha,mu,sigma,/robust
                 gal[inok[in1[gg[0]]]].Ntot=n_elements(gg) 
                 if (n_elements(alpha) eq 2 and n_elements(mu) eq 2) then begin
                                       
@@ -178,7 +178,7 @@ pro des_mock_gmbcg,cat_dir,gal,radius,patch,version
                 alpha=[0.5,0.5]
                 mu=[hquantile(gal[in2[gg]].rmi,3.),hquantile(gal[in2[gg]].rmi,0.8)]     
                 sigma=[0.04,0.3]
-                gmm_em_2com_err,gal[in2[gg]].rmi,gal[in2[gg]].rmi_err,alpha,mu,sigma,/aic,/robust  
+                gmm_em_2com_err,gal[in2[gg]].rmi,gal[in2[gg]].rmi_err,alpha,mu,sigma,/robust  
                 gal[inok[in1[gg[0]]]].Ntot=n_elements(gg) 
                 if (n_elements(alpha) eq 2 and n_elements(mu) eq 2) then begin
                     
@@ -251,7 +251,7 @@ pro des_mock_gmbcg,cat_dir,gal,radius,patch,version
                 alpha=[0.5,0.5]
                 mu=[hquantile(gal[in2[gg]].imz,3.),hquantile(gal[in2[gg]].imz,0.8)]     
                 sigma=[0.04,0.3]
-                gmm_em_2com_err,gal[in2[gg]].imz,gal[in2[gg]].imz_err,alpha,mu,sigma,/aic,/robust  
+                gmm_em_2com_err,gal[in2[gg]].imz,gal[in2[gg]].imz_err,alpha,mu,sigma,/robust  
                 gal[inok[in1[gg[0]]]].Ntot=n_elements(gg) 
                 if (n_elements(alpha) eq 2 and n_elements(mu) eq 2) then begin
               
@@ -327,7 +327,7 @@ pro des_mock_gmbcg,cat_dir,gal,radius,patch,version
                 alpha=[0.5,0.5]
                 mu=[hquantile(gal[in2[gg]].zmy,3.),hquantile(gal[in2[gg]].zmy,0.8)]     
                 sigma=[0.04,0.3]
-                gmm_em_2com_err,gal[in2[gg]].zmy,gal[in2[gg]].zmy_err,alpha,mu,sigma,/robust,/aic  
+                gmm_em_2com_err,gal[in2[gg]].zmy,gal[in2[gg]].zmy_err,alpha,mu,sigma,/robust 
                 gal[inok[in1[gg[0]]]].Ntot=n_elements(gg) 
                 if (n_elements(alpha) eq 2 and n_elements(mu) eq 2) then begin
               
