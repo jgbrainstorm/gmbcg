@@ -1,4 +1,4 @@
-s                    ;------------------------------------------------
+;------------------------------------------------
 ;Define arctanh function which is not exist in IDL
 ;------------------------------------------------
 
@@ -51,7 +51,7 @@ FUNCTION NFW_radial,r
 
 
 
-pro des_mock_gmbcg,cat_dir,gal,radius,patch,version
+pro des_mock_gmbcg_new_new,cat_dir,gal,radius,patch,version
 
     
     t0=systime(1)  
@@ -59,10 +59,10 @@ pro des_mock_gmbcg,cat_dir,gal,radius,patch,version
     gal.rmi_err=0
     gal.imz_err=0
     gal.zmy_err=0
-
+    gal.lim_i = limi(gal.photoz)
     select_des_mock_red,gal,inok   
-    bright=where(gal[inok].omag[2] le gal[inok].lim_i and gal[inok].omag[2] le 22)
-
+    ;bright=where(gal[inok].omag[3] le gal[inok].lim_i and gal[inok].omag[3] le 22)
+    bright = where(gal[inok].omag[3] ge (limi(gal[inok].photoz) - 4.) and gal[inok].omag[3] le (limi(gal[inok].photoz) - 1.5)
     inok=inok[bright]
 
     num=long(n_elements(inok))
@@ -107,16 +107,11 @@ pro des_mock_gmbcg,cat_dir,gal,radius,patch,version
               
                 mu=[hquantile(gal[in2[gg]].gmr,3.),hquantile(gal[in2[gg]].gmr,0.8)]
                 sigma=[0.04,0.3]
-                gmm_em_2com_err,gal[in2[gg]].gmr,gal[in2[gg]].gmr_err,alpha,mu,sigma,/robust
+                gmm_em_2com_err,gal[in2[gg]].gmr,0.,alpha,mu,sigma,/robust,bic2,bic1
                 gal[inok[in1[gg[0]]]].Ntot=n_elements(gg) 
                 if (n_elements(alpha) eq 2 and n_elements(mu) eq 2) then begin
                                       
-                      alpha=[0.5,0.5]
-                      mu=[hquantile(gal[in2[gg]].gmr,3.),hquantile(gal[in2[gg]].gmr,0.8)]
-                      sigma=[0.04,0.3]
-                      gmm_em_2com_err,gal[in2[gg]].gmr,0.,alpha,mu,sigma,/robust,/force2  
-                      ss=reverse(sort(alpha*gauss(gal[inok[in1[gg[0]]]].gmr,0.,mu,sigma)))
-                      ;ss=sort(sigma)
+                      ss=reverse(sort(alpha*gauss(gal[inok[in1[gg[0]]]].gmr,0.,mu,sigma))
                       ss=sort()
                       gal[inok[in1[gg[0]]]].GM_mix_gmr_clr=alpha[ss[0]]
                       gal[inok[in1[gg[0]]]].GM_mix_gmr_bgd=alpha[ss[1]]
@@ -129,120 +124,61 @@ pro des_mock_gmbcg,cat_dir,gal,radius,patch,version
                       gal[inok[in1[gg[0]]]].GM_NN=2 
                       gal[inok[in1[gg[0]]]].gm_ngals_weighted=n_elements(gg)*gal[inok[in1[gg[0]]]].gm_mix_gmr_clr
 
-                  endif else begin
-                      gal[inok[in1[gg[0]]]].GM_NN=1
-                      sigma=robust_std(gal[in2[gg]].gmr)  
-                    
-                      if abs(gal[inok[in1[gg[0]]]].gmr - mu) gt 3.*sigma then begin
-
-                          gal[inok[in1[gg[0]]]].GM_mix_gmr_clr=0
-                          gal[inok[in1[gg[0]]]].GM_mix_gmr_bgd=alpha
-
-                          gal[inok[in1[gg[0]]]].GM_gmr=0 
-                          gal[inok[in1[gg[0]]]].GM_gmr_bgd=mu
- 
-                          gal[inok[in1[gg[0]]]].GM_gmr_wdh=0
-                          gal[inok[in1[gg[0]]]].GM_gmr_wdh_bgd=sigma
-
-                      endif else begin
-
-                          gal[inok[in1[gg[0]]]].GM_mix_gmr_clr=alpha
-                          gal[inok[in1[gg[0]]]].GM_mix_gmr_bgd=0
-
-                          gal[inok[in1[gg[0]]]].GM_gmr=mu
-                          gal[inok[in1[gg[0]]]].GM_gmr_bgd=0
- 
-                          gal[inok[in1[gg[0]]]].GM_gmr_wdh=sigma
-                          gal[inok[in1[gg[0]]]].GM_gmr_wdh_bgd=0
-
-                      endelse
- 
-                  endelse
-
-                  
-                  within=where(abs(gal[in2[gg]].gmr-gal[inok[in1[gg]]].GM_gmr) le 2.*gal[inok[in1[gg]]].GM_gmr_wdh and gal[in2[gg]].omag[3] gt gal[inok[in1[gg]]].omag[3])
+                      within=where(abs(gal[in2[gg]].gmr-gal[inok[in1[gg]]].GM_gmr) le 2.*gal[inok[in1[gg]]].GM_gmr_wdh and gal[in2[gg]].omag[3] gt gal[inok[in1[gg]]].omag[3])
       
-                  if within[0] ne -1 then begin
-                    xd=(dist[gg[within]]*angdist_lambda(gal[inok[in1[gg[0]]]].photoz))
-                    gal[inok[in1[gg[0]]]].bcglh=gauss_err(gal[inok[in1[gg[0]]]].gmr,gal[inok[in1[gg[0]]]].gmr_err,gal[inok[in1[gg[0]]]].GM_gmr,gal[inok[in1[gg[0]]]].GM_gmr_wdh);
-                    gal[inok[in1[gg[0]]]].ngals=n_elements(xd)
-                    gal[inok[in1[gg[0]]]].NFW_lh=total(NFW_radial(xd))
-                    gal[inok[in1[gg[0]]]].lh=gal[inok[in1[gg[0]]]].NFW_lh*gal[inok[in1[gg[0]]]].bcglh
-                   
-                 endif
+                      if within[0] ne -1 then begin
+                          xd=(dist[gg[within]]*angdist_lambda(gal[inok[in1[gg[0]]]].photoz))
+                          gal[inok[in1[gg[0]]]].bcglh=gauss_err(gal[inok[in1[gg[0]]]].gmr,gal[inok[in1[gg[0]]]].gmr_err,gal[inok[in1[gg[0]]]].GM_gmr,gal[inok[in1[gg[0]]]].GM_gmr_wdh) ;
+                          gal[inok[in1[gg[0]]]].ngals=n_elements(xd)
+                          gal[inok[in1[gg[0]]]].NFW_lh=total(NFW_radial(xd))
+                          gal[inok[in1[gg[0]]]].lh=gal[inok[in1[gg[0]]]].NFW_lh*gal[inok[in1[gg[0]]]].bcglh
+                          gal[inok[in1[gg[0]]]].BIC1 = bic1
+                          gal[inok[in1[gg[0]]]].BIC2 = bic2
+                      endif
+                  endif
            
              endif
              ;------gr ridgeline end-------------------------
 
-             ;-------------------------ri ridgeline--------------------    
+     ;-------------------------ri ridgeline--------------------  
+
+  
              if (gal[inok[in1[gg[0]]]].ri_ridge eq 1) then begin 
 
                 alpha=[0.5,0.5]
                 mu=[hquantile(gal[in2[gg]].rmi,3.),hquantile(gal[in2[gg]].rmi,0.8)]     
                 sigma=[0.04,0.3]
-                gmm_em_2com_err,gal[in2[gg]].rmi,gal[in2[gg]].rmi_err,alpha,mu,sigma,/robust  
+                gmm_em_2com_err,gal[in2[gg]].rmi,0.,alpha,mu,sigma,/robust,bic2,bic1  
                 gal[inok[in1[gg[0]]]].Ntot=n_elements(gg) 
                 if (n_elements(alpha) eq 2 and n_elements(mu) eq 2) then begin
                     
-                    alpha=[0.5,0.5] 
-                    mu=[hquantile(gal[in2[gg]].rmi,3.),hquantile(gal[in2[gg]].rmi,0.8)]
-                    sigma=[0.04,0.3]
-                    gmm_em_2com_err,gal[in2[gg]].rmi,0.,alpha,mu,sigma,/force2,/robust 
                     ss=reverse(sort(alpha*gauss(gal[inok[in1[gg[0]]]].rmi,0.,mu,sigma)))
-                      ;ss=sort(sigma)
-                      gal[inok[in1[gg[0]]]].GM_mix_rmi_clr=alpha[ss[0]]
-                      gal[inok[in1[gg[0]]]].GM_mix_rmi_bgd=alpha[ss[1]]
-
-                      gal[inok[in1[gg[0]]]].GM_rmi=mu[ss[0]] 
-                      gal[inok[in1[gg[0]]]].GM_rmi_bgd=mu[ss[1]]
- 
-                      gal[inok[in1[gg[0]]]].GM_rmi_wdh=sigma[ss[0]] 
-                      gal[inok[in1[gg[0]]]].GM_rmi_wdh_bgd=sigma[ss[1]]
-                      gal[inok[in1[gg[0]]]].GM_NN=2 
-                      gal[inok[in1[gg[0]]]].gm_ngals_weighted=n_elements(gg)*gal[inok[in1[gg[0]]]].gm_mix_rmi_clr
+                                ;ss=sort(sigma)
+                    gal[inok[in1[gg[0]]]].GM_mix_rmi_clr=alpha[ss[0]]
+                    gal[inok[in1[gg[0]]]].GM_mix_rmi_bgd=alpha[ss[1]]
+                    
+                    gal[inok[in1[gg[0]]]].GM_rmi=mu[ss[0]] 
+                    gal[inok[in1[gg[0]]]].GM_rmi_bgd=mu[ss[1]]
+                    
+                    gal[inok[in1[gg[0]]]].GM_rmi_wdh=sigma[ss[0]] 
+                    gal[inok[in1[gg[0]]]].GM_rmi_wdh_bgd=sigma[ss[1]]
+                    gal[inok[in1[gg[0]]]].GM_NN=2 
+                    gal[inok[in1[gg[0]]]].gm_ngals_weighted=n_elements(gg)*gal[inok[in1[gg[0]]]].gm_mix_rmi_clr
               
-                  endif else begin
-                      gal[inok[in1[gg[0]]]].GM_NN=1
-
-                      if abs(gal[inok[in1[gg[0]]]].rmi - mu) gt 3.*sigma then begin
-
-                          gal[inok[in1[gg[0]]]].GM_mix_rmi_clr=0
-                          gal[inok[in1[gg[0]]]].GM_mix_rmi_bgd=alpha
-
-                          gal[inok[in1[gg[0]]]].GM_rmi=0 
-                          gal[inok[in1[gg[0]]]].GM_rmi_bgd=mu
- 
-                          gal[inok[in1[gg[0]]]].GM_rmi_wdh=0 
-                          gal[inok[in1[gg[0]]]].GM_rmi_wdh_bgd=sigma 
-
-                      endif else begin
-
-                          gal[inok[in1[gg[0]]]].GM_mix_rmi_clr=alpha
-                          gal[inok[in1[gg[0]]]].GM_mix_rmi_bgd=0
-
-                          gal[inok[in1[gg[0]]]].GM_rmi=mu
-                          gal[inok[in1[gg[0]]]].GM_rmi_bgd=0
- 
-                          gal[inok[in1[gg[0]]]].GM_rmi_wdh=sigma  
-                          gal[inok[in1[gg[0]]]].GM_rmi_wdh_bgd=0
-
-                      endelse
- 
-                  endelse
-
-                   within=where(abs(gal[in2[gg]].rmi-gal[inok[in1[gg]]].GM_rmi) le 2.*gal[inok[in1[gg]]].GM_rmi_wdh and gal[in2[gg]].omag[3] gt gal[inok[in1[gg]]].omag[3])
+                    within=where(abs(gal[in2[gg]].rmi-gal[inok[in1[gg]]].GM_rmi) le 2.*gal[inok[in1[gg]]].GM_rmi_wdh and gal[in2[gg]].omag[3] gt gal[inok[in1[gg]]].omag[3])
 
        
-                 if within[0] ne -1 then begin
+                    if within[0] ne -1 then begin
                     
                     xd=(dist[gg[within]]*angdist_lambda(gal[inok[in1[gg[0]]]].photoz))
                     gal[inok[in1[gg[0]]]].bcglh=gauss_err(gal[inok[in1[gg[0]]]].rmi,gal[inok[in1[gg[0]]]].rmi_err,gal[inok[in1[gg[0]]]].GM_rmi,gal[inok[in1[gg[0]]]].GM_rmi_wdh) 
                     gal[inok[in1[gg[0]]]].ngals=n_elements(xd)
                     gal[inok[in1[gg[0]]]].NFW_lh=total(NFW_radial(xd))
                     gal[inok[in1[gg[0]]]].lh=gal[inok[in1[gg[0]]]].NFW_lh*gal[inok[in1[gg[0]]]].bcglh
-                  
+                    gal[inok[in1[gg[0]]]].BIC1 = bic1
+                    gal[inok[in1[gg[0]]]].BIC2 = bic2
+                    endif
                  endif
-           
              endif
              ;------ri ridgeline end-------------------------
 
@@ -254,73 +190,38 @@ pro des_mock_gmbcg,cat_dir,gal,radius,patch,version
                 alpha=[0.5,0.5]
                 mu=[hquantile(gal[in2[gg]].imz,3.),hquantile(gal[in2[gg]].imz,0.8)]     
                 sigma=[0.04,0.3]
-                gmm_em_2com_err,gal[in2[gg]].imz,gal[in2[gg]].imz_err,alpha,mu,sigma,/robust  
+                gmm_em_2com_err,gal[in2[gg]].imz,0.,alpha,mu,sigma,/robust,bic2,bic1  
                 gal[inok[in1[gg[0]]]].Ntot=n_elements(gg) 
                 if (n_elements(alpha) eq 2 and n_elements(mu) eq 2) then begin
               
-                     alpha=[0.5,0.5]
-                     mu=[hquantile(gal[in2[gg]].imz,3.),hquantile(gal[in2[gg]].imz,0.8)] 
-                     sigma=[0.04,0.3]
-                     gmm_em_2com_err,gal[in2[gg]].imz,0.,alpha,mu,sigma,/force2,/robust
-                      ss=reverse(sort(alpha*gauss(gal[inok[in1[gg[0]]]].imz,0.,mu,sigma)))                                    
+                    ss=reverse(sort(alpha*gauss(gal[inok[in1[gg[0]]]].imz,0.,mu,sigma)))                                    
                       ;ss=sort(sigma)
-                      gal[inok[in1[gg[0]]]].GM_mix_imz_clr=alpha[ss[0]]
-                      gal[inok[in1[gg[0]]]].GM_mix_imz_bgd=alpha[ss[1]]
-
-                      gal[inok[in1[gg[0]]]].GM_imz=mu[ss[0]] 
-                      gal[inok[in1[gg[0]]]].GM_imz_bgd=mu[ss[1]]
- 
-                      gal[inok[in1[gg[0]]]].GM_imz_wdh=sigma[ss[0]] 
-                      gal[inok[in1[gg[0]]]].GM_imz_wdh_bgd=sigma[ss[1]]
-                      gal[inok[in1[gg[0]]]].GM_NN=2 
-                      gal[inok[in1[gg[0]]]].gm_ngals_weighted=n_elements(gg)*gal[inok[in1[gg[0]]]].gm_mix_imz_clr
-              
-                  endif else begin
-                      gal[inok[in1[gg[0]]]].GM_NN=1
-                     
-                      if abs(gal[inok[in1[gg[0]]]].imz - mu) gt 3.*sigma then begin
-
-                          gal[inok[in1[gg[0]]]].GM_mix_imz_clr=0
-                          gal[inok[in1[gg[0]]]].GM_mix_imz_bgd=alpha
-
-                          gal[inok[in1[gg[0]]]].GM_imz=0 
-                          gal[inok[in1[gg[0]]]].GM_imz_bgd=mu
- 
-                          gal[inok[in1[gg[0]]]].GM_imz_wdh=0
-                          gal[inok[in1[gg[0]]]].GM_imz_wdh_bgd=sigma 
-
-                      endif else begin
-
-                          gal[inok[in1[gg[0]]]].GM_mix_imz_clr=alpha
-                          gal[inok[in1[gg[0]]]].GM_mix_imz_bgd=0
-
-                          gal[inok[in1[gg[0]]]].GM_imz=mu
-                          gal[inok[in1[gg[0]]]].GM_imz_bgd=0
- 
-                          gal[inok[in1[gg[0]]]].GM_imz_wdh=sigma
-                          gal[inok[in1[gg[0]]]].GM_imz_wdh_bgd=0
-
-                      endelse
- 
-                  endelse
-
+                    gal[inok[in1[gg[0]]]].GM_mix_imz_clr=alpha[ss[0]]
+                    gal[inok[in1[gg[0]]]].GM_mix_imz_bgd=alpha[ss[1]]
+                    
+                    gal[inok[in1[gg[0]]]].GM_imz=mu[ss[0]] 
+                    gal[inok[in1[gg[0]]]].GM_imz_bgd=mu[ss[1]]
+                    
+                    gal[inok[in1[gg[0]]]].GM_imz_wdh=sigma[ss[0]] 
+                    gal[inok[in1[gg[0]]]].GM_imz_wdh_bgd=sigma[ss[1]]
+                    gal[inok[in1[gg[0]]]].GM_NN=2 
+                    gal[inok[in1[gg[0]]]].gm_ngals_weighted=n_elements(gg)*gal[inok[in1[gg[0]]]].gm_mix_imz_clr
                   
-                  within=where(abs(gal[in2[gg]].imz-gal[inok[in1[gg]]].GM_imz) le 2.*gal[inok[in1[gg]]].GM_imz_wdh and gal[in2[gg]].omag[3] gt gal[inok[in1[gg]]].omag[3])
-
-               
-              
+                    within=where(abs(gal[in2[gg]].imz-gal[inok[in1[gg]]].GM_imz) le 2.*gal[inok[in1[gg]]].GM_imz_wdh and gal[in2[gg]].omag[3] gt gal[inok[in1[gg]]].omag[3])
                  
-                 if within[0] ne -1 then begin
-                    xd=(dist[gg[within]]*angdist_lambda(gal[inok[in1[gg[0]]]].photoz))
-                    gal[inok[in1[gg[0]]]].bcglh=gauss_err(gal[inok[in1[gg[0]]]].imz,gal[inok[in1[gg[0]]]].imz_err,gal[inok[in1[gg[0]]]].GM_imz,gal[inok[in1[gg[0]]]].GM_imz_wdh) 
-                    gal[inok[in1[gg[0]]]].ngals=n_elements(xd)
-                    gal[inok[in1[gg[0]]]].NFW_lh=total(NFW_radial(xd))
-                    gal[inok[in1[gg[0]]]].gm_ngals_weighted = n_elements(gg)*gal[inok[in1[gg[0]]]].gm_mix_imz_clr
-                    gal[inok[in1[gg[0]]]].lh=gal[inok[in1[gg[0]]]].NFW_lh*gal[inok[in1[gg[0]]]].bcglh
-                 
-                 endif
+                    if within[0] ne -1 then begin
+                        xd=(dist[gg[within]]*angdist_lambda(gal[inok[in1[gg[0]]]].photoz))
+                        gal[inok[in1[gg[0]]]].bcglh=gauss_err(gal[inok[in1[gg[0]]]].imz,gal[inok[in1[gg[0]]]].imz_err,gal[inok[in1[gg[0]]]].GM_imz,gal[inok[in1[gg[0]]]].GM_imz_wdh) 
+                        gal[inok[in1[gg[0]]]].ngals=n_elements(xd)
+                        gal[inok[in1[gg[0]]]].NFW_lh=total(NFW_radial(xd))
+                        gal[inok[in1[gg[0]]]].gm_ngals_weighted = n_elements(gg)*gal[inok[in1[gg[0]]]].gm_mix_imz_clr
+                        gal[inok[in1[gg[0]]]].lh=gal[inok[in1[gg[0]]]].NFW_lh*gal[inok[in1[gg[0]]]].bcglh
+                        gal[inok[in1[gg[0]]]].BIC1 = bic1
+                        gal[inok[in1[gg[0]]]].BIC2 = bic2
+                    endif
+                endif
            
-             endif
+            endif
              ;------iz ridgeline end-------------------------
 
 
@@ -330,7 +231,7 @@ pro des_mock_gmbcg,cat_dir,gal,radius,patch,version
                 alpha=[0.5,0.5]
                 mu=[hquantile(gal[in2[gg]].zmy,3.),hquantile(gal[in2[gg]].zmy,0.8)]     
                 sigma=[0.04,0.3]
-                gmm_em_2com_err,gal[in2[gg]].zmy,gal[in2[gg]].zmy_err,alpha,mu,sigma,/robust 
+                gmm_em_2com_err,gal[in2[gg]].zmy,0.,alpha,mu,sigma,/robust 
                 gal[inok[in1[gg[0]]]].Ntot=n_elements(gg) 
                 if (n_elements(alpha) eq 2 and n_elements(mu) eq 2) then begin
               
@@ -351,47 +252,19 @@ pro des_mock_gmbcg,cat_dir,gal,radius,patch,version
                       gal[inok[in1[gg[0]]]].GM_NN=2 
                       gal[inok[in1[gg[0]]]].gm_ngals_weighted=n_elements(gg)*gal[inok[in1[gg[0]]]].gm_mix_zmy_clr
               
-              
-                  endif else begin
-                      gal[inok[in1[gg[0]]]].GM_NN=1
-                     
-                      if abs(gal[inok[in1[gg[0]]]].zmy - mu) gt 3.*sigma then begin
-
-                          gal[inok[in1[gg[0]]]].GM_mix_zmy_clr=0
-                          gal[inok[in1[gg[0]]]].GM_mix_zmy_bgd=alpha
-
-                          gal[inok[in1[gg[0]]]].GM_zmy=0 
-                          gal[inok[in1[gg[0]]]].GM_zmy_bgd=mu
- 
-                          gal[inok[in1[gg[0]]]].GM_zmy_wdh=0 
-                          gal[inok[in1[gg[0]]]].GM_zmy_wdh_bgd=sigma 
-
-                      endif else begin
-
-                          gal[inok[in1[gg[0]]]].GM_mix_zmy_clr=alpha
-                          gal[inok[in1[gg[0]]]].GM_mix_zmy_bgd=0
-
-                          gal[inok[in1[gg[0]]]].GM_zmy=mu
-                          gal[inok[in1[gg[0]]]].GM_zmy_bgd=0
- 
-                          gal[inok[in1[gg[0]]]].GM_zmy_wdh=sigma  
-                          gal[inok[in1[gg[0]]]].GM_zmy_wdh_bgd=0
-
-                      endelse
- 
-                  endelse
-
-                   within=where(abs(gal[in2[gg]].zmy-gal[inok[in1[gg]]].GM_zmy) le 2.*gal[inok[in1[gg]]].GM_zmy_wdh and gal[in2[gg]].omag[3] gt gal[inok[in1[gg]]].omag[3])
+                      within=where(abs(gal[in2[gg]].zmy-gal[inok[in1[gg]]].GM_zmy) le 2.*gal[inok[in1[gg]]].GM_zmy_wdh and gal[in2[gg]].omag[3] gt gal[inok[in1[gg]]].omag[3])
                   
               
-                 if within[0] ne -1 then begin
-                    xd=(dist[gg[within]]*angdist_lambda(gal[inok[in1[gg[0]]]].photoz))
-                    gal[inok[in1[gg[0]]]].bcglh=gauss_err(gal[inok[in1[gg[0]]]].zmy,gal[inok[in1[gg[0]]]].zmy_err,gal[inok[in1[gg[0]]]].GM_zmy,gal[inok[in1[gg[0]]]].GM_zmy_wdh) 
-                    gal[inok[in1[gg[0]]]].ngals=n_elements(xd)
-                    gal[inok[in1[gg[0]]]].NFW_lh=total(NFW_radial(xd))
-                    gal[inok[in1[gg[0]]]].gm_ngals_weighted=n_elements(gg)*gal[inok[in1[gg[0]]]].gm_mix_zmy_clr
-                    gal[inok[in1[gg[0]]]].lh=gal[inok[in1[gg[0]]]].NFW_lh*gal[inok[in1[gg[0]]]].bcglh
-                 
+                      if within[0] ne -1 then begin
+                          xd=(dist[gg[within]]*angdist_lambda(gal[inok[in1[gg[0]]]].photoz))
+                          gal[inok[in1[gg[0]]]].bcglh=gauss_err(gal[inok[in1[gg[0]]]].zmy,gal[inok[in1[gg[0]]]].zmy_err,gal[inok[in1[gg[0]]]].GM_zmy,gal[inok[in1[gg[0]]]].GM_zmy_wdh) 
+                          gal[inok[in1[gg[0]]]].ngals=n_elements(xd)
+                          gal[inok[in1[gg[0]]]].NFW_lh=total(NFW_radial(xd))
+                          gal[inok[in1[gg[0]]]].gm_ngals_weighted=n_elements(gg)*gal[inok[in1[gg[0]]]].gm_mix_zmy_clr
+                          gal[inok[in1[gg[0]]]].lh=gal[inok[in1[gg[0]]]].NFW_lh*gal[inok[in1[gg[0]]]].bcglh
+                          gal[inok[in1[gg[0]]]].BIC1 = bic1
+                          gal[inok[in1[gg[0]]]].BIC2 = bic2
+                      endif
                  endif
            
              endif
@@ -408,11 +281,11 @@ pro des_mock_gmbcg,cat_dir,gal,radius,patch,version
       ; x_zy=where(gal[inok[in1]].zy_ridge eq 1)
 
       
-        in_gr=where(abs(gal[in2[x_gr]].gmr-gal[inok[in1[x_gr]]].GM_gmr) le 2.*gal[inok[in1[x_gr]]].GM_gmr_wdh and gal[in2[x_gr]].omag[3] gt gal[inok[in1[x_gr]]].omag[3] and abs(gal[inok[in1[x_gr]]].gmr-gal[inok[in1[x_gr]]].GM_gmr) le 2.*gal[inok[in1[x_gr]]].GM_gmr_wdh);;only 2 sig of nocov 10/1/09
+        in_gr=where(abs(gal[in2[x_gr]].gmr-gal[inok[in1[x_gr]]].GM_gmr) le 2.*gal[inok[in1[x_gr]]].GM_gmr_wdh and gal[in2[x_gr]].omag[3] gt gal[inok[in1[x_gr]]].omag[3] and abs(gal[inok[in1[x_gr]]].gmr-gal[inok[in1[x_gr]]].GM_gmr) le 2.*gal[inok[in1[x_gr]]].GM_gmr_wdh and gal[inok[in1[x_gr]]].GM_NN eq 2 and gal[inok[in1[x_gr]]].bic2 le gal[inok[in1[x_gr]]].bic1 - 5);;only 2 sig of nocov 10/1/09
 
-        in_ri=where(abs(gal[in2[x_ri]].rmi-gal[inok[in1[x_ri]]].GM_rmi) le 2.*gal[inok[in1[x_ri]]].GM_rmi_wdh and gal[in2[x_ri]].omag[3] gt gal[inok[in1[x_ri]]].omag[3] and abs(gal[inok[in1[x_ri]]].rmi-gal[inok[in1[x_ri]]].GM_rmi) le 2.*gal[inok[in1[x_ri]]].GM_rmi_wdh) 
+        in_ri=where(abs(gal[in2[x_ri]].rmi-gal[inok[in1[x_ri]]].GM_rmi) le 2.*gal[inok[in1[x_ri]]].GM_rmi_wdh and gal[in2[x_ri]].omag[3] gt gal[inok[in1[x_ri]]].omag[3] and abs(gal[inok[in1[x_ri]]].rmi-gal[inok[in1[x_ri]]].GM_rmi) le 2.*gal[inok[in1[x_ri]]].GM_rmi_wdh and gal[inok[in1[x_ri]]].GM_NN eq 2 and gal[inok[in1[x_ri]]].bic2 le gal[inok[in1[x_ri]]].bic1 -5) 
         
-        in_iz=where(abs(gal[in2[x_iz]].imz-gal[inok[in1[x_iz]]].GM_imz) le 2.*gal[inok[in1[x_iz]]].GM_imz_wdh and gal[in2[x_iz]].omag[3] gt gal[inok[in1[x_iz]]].omag[3] and abs(gal[inok[in1[x_iz]]].imz-gal[inok[in1[x_iz]]].GM_imz) le 2.*gal[inok[in1[x_iz]]].GM_imz_wdh) 
+        in_iz=where(abs(gal[in2[x_iz]].imz-gal[inok[in1[x_iz]]].GM_imz) le 2.*gal[inok[in1[x_iz]]].GM_imz_wdh and gal[in2[x_iz]].omag[3] gt gal[inok[in1[x_iz]]].omag[3] and abs(gal[inok[in1[x_iz]]].imz-gal[inok[in1[x_iz]]].GM_imz) le 2.*gal[inok[in1[x_iz]]].GM_imz_wdh and gal[inok[in1[x_iz]]].GM_NN eq 2 and gal[inok[in1[x_iz]]].bic2 le gal[inok[in1[x_iz]]].bic1 - 5) 
 
 
       
@@ -545,7 +418,7 @@ pro des_mock_gmbcg,cat_dir,gal,radius,patch,version
            galok=where(gal.isbcg eq 999)
 
           
-        bcgt=create_struct('objid',long64(0),'omag',[0.,0.,0.,0.,0],'amag',[0.,0.,0.,0.,0],'ra',0.D,'dec',0.D,'photoz',0.,'photoz_err',0.,'Ngals',0,'lh',0.,'z',0.,'lim_i',0.,'gmr',0.,'rmi',0.,'imz',0.,'zmy',0.,'flag',0.,'gmr_err',0.,'rmi_err',0.,'imz_err',0.,'zmy_err',0.,'r200',0.,'ngals_r200',0,'ngals_500kpc',0,'used',0,'bcglh',0.0,'bcgmag_lh',0.,'NFW_lh',0.,'bcg_gr_lh',0.,'bcg_ri_lh',0.,'bcg_iz_lh',0.,'rcenter',0.,'concentration',0.,'gr_ridge',0.,'ri_ridge',0.,'iz_ridge',0.,'zy_ridge',0.,'GM_gmr',0.,'GM_rmi',0.,'GM_imz',0.,'GM_zmy',0.,'GM_gmr_wdh',0.,'GM_rmi_wdh',0.,'GM_imz_wdh',0.,'GM_zmy_wdh',0.,'GM_mix_gmr_clr',0.,'GM_mix_gmr_bgd',0.,'GM_mix_rmi_clr',0.,'GM_mix_rmi_bgd',0.,'GM_mix_imz_clr',0.,'GM_mix_imz_bgd',0.,'GM_mix_zmy_clr',0.,'GM_mix_zmy_bgd',0.,'GM_gmr_bgd',0.,'GM_gmr_wdh_bgd',0.,'GM_rmi_bgd',0.,'GM_rmi_wdh_bgd',0.,'GM_imz_bgd',0.,'GM_imz_wdh_bgd',0.,'GM_zmy_bgd',0.,'GM_zmy_wdh_bgd',0.,'central',0,'GM_NN',0,'GM_Ngals_Weighted',0.,'Ntot',0.)
+        bcgt=create_struct('objid',long64(0),'omag',[0.,0.,0.,0.,0],'amag',[0.,0.,0.,0.,0],'ra',0.D,'dec',0.D,'photoz',0.,'photoz_err',0.,'Ngals',0,'lh',0.,'z',0.,'lim_i',0.,'gmr',0.,'rmi',0.,'imz',0.,'zmy',0.,'flag',0.,'gmr_err',0.,'rmi_err',0.,'imz_err',0.,'zmy_err',0.,'r200',0.,'ngals_r200',0,'ngals_500kpc',0,'used',0,'bcglh',0.0,'bcgmag_lh',0.,'NFW_lh',0.,'bcg_gr_lh',0.,'bcg_ri_lh',0.,'bcg_iz_lh',0.,'rcenter',0.,'concentration',0.,'gr_ridge',0.,'ri_ridge',0.,'iz_ridge',0.,'zy_ridge',0.,'GM_gmr',0.,'GM_rmi',0.,'GM_imz',0.,'GM_zmy',0.,'GM_gmr_wdh',0.,'GM_rmi_wdh',0.,'GM_imz_wdh',0.,'GM_zmy_wdh',0.,'GM_mix_gmr_clr',0.,'GM_mix_gmr_bgd',0.,'GM_mix_rmi_clr',0.,'GM_mix_rmi_bgd',0.,'GM_mix_imz_clr',0.,'GM_mix_imz_bgd',0.,'GM_mix_zmy_clr',0.,'GM_mix_zmy_bgd',0.,'GM_gmr_bgd',0.,'GM_gmr_wdh_bgd',0.,'GM_rmi_bgd',0.,'GM_rmi_wdh_bgd',0.,'GM_imz_bgd',0.,'GM_imz_wdh_bgd',0.,'GM_zmy_bgd',0.,'GM_zmy_wdh_bgd',0.,'central',0,'GM_NN',0,'GM_Ngals_Weighted',0.,'Ntot',0.,'bic1',0.,'bic2',0.)
        
       bcg=replicate(bcgt,n_elements(galok))
       h=0.7
@@ -618,7 +491,9 @@ pro des_mock_gmbcg,cat_dir,gal,radius,patch,version
       bcg.GM_imz_wdh_bgd=gal[galok].GM_imz_wdh_bgd
       bcg.GM_zmy_bgd=gal[galok].GM_zmy_bgd
       bcg.GM_zmy_wdh_bgd=gal[galok].GM_zmy_wdh_bgd
-     
+      bcg.bic1=gal[galok].bic1
+      bcg.bic2=gal[galok].bic2
+      
 
 
       t1=systime(1)

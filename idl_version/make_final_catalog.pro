@@ -10,7 +10,7 @@ pro make_final_catalog,catdir,version
      
 
 
-    t1=create_struct('rank',0L,'ra',0.D,'dec',0.D,'z',0.,'photoz',0.,'ngals',0,'nfw_lh',0.,'gm_ngals_weighted',0.,'objid',0L)
+    t1=create_struct('rank',0L,'ra',0.D,'dec',0.D,'z',0.,'photoz',0.,'ngals',0,'nfw_lh',0.,'gm_ngals_weighted',0.,'objid',0L,'bic1',0.,'bic2',0.)
     t1=replicate(t1,n_elements(bg.(0)))
     rank=lindgen(n_elements(bg.(0)))
     s=reverse(sort(bg.ngals))
@@ -24,7 +24,8 @@ pro make_final_catalog,catdir,version
     t1.nfw_lh=bg.nfw_lh
     t1.gm_ngals_weighted=bg.gm_ngals_weighted
     t1.objid = bg.objid
-
+    t1.bic1 = bg.bic1
+    t1.bic2 = bg.bic2
     mwrfits,t1,catdir+'des_mock_v'+ntostr(version,4)+'_gmbcg_Hao.fit',/create
 
 
