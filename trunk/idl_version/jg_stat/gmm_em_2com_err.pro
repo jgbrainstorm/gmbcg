@@ -30,7 +30,7 @@ FUNCTION p1,x_i,x_err,alpha,mu,sigma
 END
 
 
-pro gmm_em_2com_err,xx,xx_err,alpha,mu,sigma,force2=force2,aic=aic,robust=robust
+pro gmm_em_2com_err,xx,xx_err,alpha,mu,sigma,force2=force2,aic=aic,robust=robust, BIC, BIC_1com
    !except=0           ;to avoid the report of underflow or overflows. 
     acc=0.0000001
     M=2

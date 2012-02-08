@@ -78,11 +78,11 @@ pro plotbin,x,y,yerr=yerr,binsize=binsize,overplot=overplot,xtitle=xtitle,ytitle
 
     if keyword_set(linefit) then begin
 
-       if keyword_set(weighted) then res = LINFIT(xbin,ybin,measure_errors=ysmdbin,/double,sigma=res_sigma,chisq=gmr_chi2) else res = LINFIT(xbin,ybin,/double,sigma=res_sigma,chisq=gmr_chi2)
+      ; if keyword_set(weighted) then res = LINFIT(xbin,ybin,measure_errors=ysmdbin,/double,sigma=res_sigma,chisq=gmr_chi2) else res = LINFIT(xbin,ybin,/double,sigma=res_sigma,chisq=gmr_chi2)
        
-        oplot,[min(xbin)-0.1,max(xbin)+0.1],[min(xbin)-0.1,max(xbin)+0.1]*res[1]+res[0],col=color,thick=thick
+      ;  oplot,[min(xbin)-0.1,max(xbin)+0.1],[min(xbin)-0.1,max(xbin)+0.1]*res[1]+res[0],col=color,thick=thick
     
-       if res_sigma[0] eq 0 and res_sigma[1] eq 0 then legend,['Slope: '+ntostr(res[1]),'Intercept: '+ntostr(res[0])],charsize=1,/bottom,/right,textcolors=textcolors else legend,['Slope: '+ntostr(res[1])+textoidl('\pm')+ ntostr(res_sigma[1]),'Intercept: '+ntostr(res[0])+textoidl('\pm')+ ntostr(res_sigma[0])],charsize=1.5,/bottom,box=0,/right,textcolors=textcolors
+      ; if res_sigma[0] eq 0 and res_sigma[1] eq 0 then legend,['Slope: '+ntostr(res[1]),'Intercept: '+ntostr(res[0])],charsize=1,/bottom,/right,textcolors=textcolors else legend,['Slope: '+ntostr(res[1])+textoidl('\pm')+ ntostr(res_sigma[1]),'Intercept: '+ntostr(res[0])+textoidl('\pm')+ ntostr(res_sigma[0])],charsize=1.5,/bottom,box=0,/right,textcolors=textcolors
    
     endif
 
