@@ -13,21 +13,24 @@ import scipy.stats as sts
 import glob as gl
 import time
 
-class candidateBCG:
+class BCG:
     def __init__(self):
-        self.ID = None
-        self.childID = None
+        self.Idx = None
+        self.childIdx = None
         self.alpha = None
         self.mu = None
         self.sigma = None
         self.rich = None
         self.bic1 = None
         self.bic2 = None
-        
-        
-        
 
-def gmbcgFinder(objID=None,ra=None, dec=None, photoz=None,color=None,colorErr=None,mag=None,rich=None,bcgCandidateIdx=None,memberID=None, blockedID=None, selectedID = None):
+def bgDsty(color=None,mag=None,area=None):
+    N=len(color)
+    value=np.array(zip(color,mag))
+    kde=sts.gaussian_kde(value.T)
+    
+        
+def gmbcgFinder(objID=None,ra=None, dec=None, photoz=None,gmr=None,gmrErr=None,rmi=None,rmiErr=None,imz=None, imzErr=None,mag=None,bcgCandidateIdx=None):
     cra = ra[bcgCandidateIdx]
     cdec = dec[bcgCandidateIdx]
     cmag = mag[bcgCandidateIdx]
@@ -38,7 +41,7 @@ def gmbcgFinder(objID=None,ra=None, dec=None, photoz=None,color=None,colorErr=No
     srad=np.rad2deg(1./DA)
     m1,m2,d12 = h.match(cra,cdec,ra,dec,srad,maxmatch=5000)
     r12=np.deg2rad(d12)*DA[m1]
-    indices=(mag[m2]<=limi(cphotoz[m1]))*(cmag[m1] < mag[m2])
+    indices=(mag[m2]<=limz(cphotoz[m1]))*(cmag[m1] < mag[m2])
     m1 = m1[indices]
     m2 = m2[indices]
     h,rev = es.stat.histogram(m1, binsize=1, rev=True)
@@ -68,12 +71,12 @@ def gmbcgFinder(objID=None,ra=None, dec=None, photoz=None,color=None,colorErr=No
             if bic2 < bic1:
                 bcgi=candidateBCG()
                 srt=np.argsort(sigma)
-                bcgi.ID = objID[m1[indx[0]]]
+                bcgi.Idx = m1[indx[0]]
                 bcgi.alpha=alpha[srt]
                 bcgi.mu=mu[srt]
                 bcgi.sigma=sigma[srt]
                 bcgi.rich = Ntot * alpha[0]
-                bcgi.childID=objID[m2[indx]]
+                bcgi.childIdx=m2[indx]
                 bcgi.bic1=bic1
                 bcgi.bic2=bic2
                 BCG.append(bcgi)
