@@ -62,7 +62,7 @@ pro des_mock_gmbcg_new_new,cat_dir,gal,radius,patch,version
     gal.lim_i = limi(gal.photoz)
     select_des_mock_red,gal,inok   
     ;bright=where(gal[inok].omag[3] le gal[inok].lim_i and gal[inok].omag[3] le 22)
-    bright = where(gal[inok].omag[3] ge (limi(gal[inok].photoz) - 4.) and gal[inok].omag[3] le (limi(gal[inok].photoz) - 1.5)
+    bright = where(gal[inok].omag[3] ge (limi(gal[inok].photoz) - 4.) and gal[inok].omag[3] le (limi(gal[inok].photoz) - 1.5))
     inok=inok[bright]
 
     num=long(n_elements(inok))
@@ -111,8 +111,7 @@ pro des_mock_gmbcg_new_new,cat_dir,gal,radius,patch,version
                 gal[inok[in1[gg[0]]]].Ntot=n_elements(gg) 
                 if (n_elements(alpha) eq 2 and n_elements(mu) eq 2) then begin
                                       
-                      ss=reverse(sort(alpha*gauss(gal[inok[in1[gg[0]]]].gmr,0.,mu,sigma))
-                      ss=sort()
+                      ss=reverse(sort(alpha*gauss(gal[inok[in1[gg[0]]]].gmr,0.,mu,sigma)))
                       gal[inok[in1[gg[0]]]].GM_mix_gmr_clr=alpha[ss[0]]
                       gal[inok[in1[gg[0]]]].GM_mix_gmr_bgd=alpha[ss[1]]
 
@@ -382,7 +381,6 @@ pro des_mock_gmbcg_new_new,cat_dir,gal,radius,patch,version
                 bcgmb[dd].rmi=gal[in2[dd]].rmi
                 bcgmb[dd].imz=gal[in2[dd]].imz
                 bcgmb[dd].zmy=gal[in2[dd]].zmy
- ss=reverse(sort(alpha*gauss(gal[inok[in1[gg[0]]]].rmi,0.,mu,sigma)))
                 bcgmb[dd].objid=gal[in2[dd]].objid
                 bcgmb[dd].photoz=gal[in2[dd]].photoz
                 bcgmb[dd].photoz_err=gal[in2[dd]].photoz_err

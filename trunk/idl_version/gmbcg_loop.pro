@@ -2,13 +2,6 @@
 
 pro gmbcg_loop,input_dir,cat_dir,radius,truth=truth
 
-    ;input_dir='/data/des_mock_catalog/v2.13/original_cat/'
-    ;cat_dir='/data/des_mock_catalog/v2.13/gmbcg_cluster/newsvn/'
-    
-   ; readconfig,filename,input_dir,cat_dir,srad
-
-   ; input_dir='/archive/staging/DES/SIMULATIONS/wechsler/v2.13/'
-   ; cat_dir='/archive/staging/DES/SIMULATIONS/wechsler/v2.13/'
     version = 1.0
    ; if keyword_set(truth) then file=findfile(input_dir+'DES_Mock_v2.13_Baseline_truth*.fit') else file=findfile(input_dir+'DES_Mock_v2.13_Baseline_0*.fit')  
     file=findfile(input_dir+'*.fit')
@@ -43,7 +36,7 @@ pro gmbcg_loop,input_dir,cat_dir,radius,truth=truth
             str.omag_err[2] = gal.magerr_i
             str.omag_err[3] = gal.magerr_z
             str.omag_err[4] = gal.magerr_y
-            str.photoz =gal.annz
+            str.photoz =gal.photoz_gaussian
             str.photoz_err = gal.annz_err
         endelse
 
@@ -57,16 +50,16 @@ pro gmbcg_loop,input_dir,cat_dir,radius,truth=truth
         str.rmi_err=sqrt(str.omag_err[1]^2+str.omag_err[2]^2)
         str.imz_err=sqrt(str.omag_err[2]^2+str.omag_err[3]^2)
         str.zmy_err=sqrt(str.omag_err[3]^2+str.omag_err[4]^2)
-        x_gr=where(str.photoz le 0.35)
-        x_ri=where(str.photoz gt 0.35 and str.photoz le 0.7)
-        x_iz=where(str.photoz gt 0.7 and str.photoz le 1.0)
+        x_gr=where(str.photoz le 0.4)
+        x_ri=where(str.photoz gt 0.4 and str.photoz le 0.75)
+        x_iz=where(str.photoz gt 0.75 and str.photoz le 1.0)
         x_zy=where(str.photoz gt 1.0)
         str[x_gr].gr_ridge=1
         str[x_ri].ri_ridge=1
         str[x_iz].iz_ridge=1
         str[x_zy].zy_ridge=1
-        str.lim_i=vlmti(str.photoz)
-       ; str.lim_i=limi(str.photoz)
+        ;str.lim_i=vlmti(str.photoz)
+        str.lim_i=limi(str.photoz)
         gal=str[where(str.photoz ge 0.1 and str.photoz le 1.0)]
             
         des_mock_gmbcg_new_new,cat_dir,gal,radius,patch,version
