@@ -58,8 +58,8 @@ pro gmbcg_loop,input_dir,cat_dir,radius,truth=truth
         str[x_ri].ri_ridge=1
         str[x_iz].iz_ridge=1
         str[x_zy].zy_ridge=1
-        str.lim_i=vlmti(str.photoz)
-       ; str.lim_i=limi(str.photoz)
+        ;str.lim_i=vlmti(str.photoz)
+        str.lim_i=limi(str.photoz)
         gal=str[where(str.photoz ge 0.1 and str.photoz le 1.0)]
             
         des_mock_gmbcg_new_new,cat_dir,gal,radius,patch,version

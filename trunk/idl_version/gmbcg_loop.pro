@@ -2,7 +2,7 @@
 
 pro gmbcg_loop,input_dir,cat_dir,radius,truth=truth
 
-    version = 1.0
+    version = 3.04
    ; if keyword_set(truth) then file=findfile(input_dir+'DES_Mock_v2.13_Baseline_truth*.fit') else file=findfile(input_dir+'DES_Mock_v2.13_Baseline_0*.fit')  
     file=findfile(input_dir+'*.fit')
     for patch=0,n_elements(file)-1 do begin
@@ -52,16 +52,16 @@ pro gmbcg_loop,input_dir,cat_dir,radius,truth=truth
         str.zmy_err=sqrt(str.omag_err[3]^2+str.omag_err[4]^2)
         x_gr=where(str.photoz le 0.4)
         x_ri=where(str.photoz gt 0.4 and str.photoz le 0.75)
-        x_iz=where(str.photoz gt 0.75 and str.photoz le 1.0)
-        x_zy=where(str.photoz gt 1.0)
+        x_iz=where(str.photoz gt 0.75 and str.photoz le 1.15)
+        x_zy=where(str.photoz gt 1.15)
         str[x_gr].gr_ridge=1
         str[x_ri].ri_ridge=1
         str[x_iz].iz_ridge=1
         str[x_zy].zy_ridge=1
         ;str.lim_i=vlmti(str.photoz)
         str.lim_i=limi(str.photoz)
-        gal=str[where(str.photoz ge 0.1 and str.photoz le 1.0)]
-            
+        ;gal=str[where(str.photoz ge 0.1 and str.photoz le 1.0)]
+        gal = str   
         des_mock_gmbcg_new_new,cat_dir,gal,radius,patch,version
         catch,error_status
         if error_status ne 0 then exit

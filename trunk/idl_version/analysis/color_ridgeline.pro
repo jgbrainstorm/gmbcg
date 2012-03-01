@@ -1,8 +1,8 @@
 function gmmridgeplot,bcg,z1,z2
-         
-         x=where(bcg.photoz ge z1 and bcg.photoz le z2)
+        
+         x = where(bcg.photoz ge z1 and bcg.photoz le z2)         
 
-         if z1 ge 0.1 and z2 le 0.35 then begin
+         if z1 ge 0.1 and z2 le 0.4 then begin
              ok=where(bcg[x].gm_gmr ne 0)
              x=x[ok]
              alpha=[median(bcg[x].gm_mix_gmr_clr),median(bcg[x].gm_mix_gmr_bgd)]
@@ -13,7 +13,7 @@ function gmmridgeplot,bcg,z1,z2
          endif 
 
 
-         if z1 ge 0.35 and z2 le 0.7 then begin
+         if z1 ge 0.4 and z2 le 0.75 then begin
              ok=where(bcg[x].gm_rmi ne 0)
              x=x[ok]
              alpha=[median(bcg[x].gm_mix_rmi_clr),median(bcg[x].gm_mix_rmi_bgd)]
@@ -23,7 +23,7 @@ function gmmridgeplot,bcg,z1,z2
              legend,['z: '+ntostr(z1,5)+' - '+ntostr(z2,5)],box=0,charsize=2
          endif 
 
-         if z1 ge 0.7 and z2 le 1.0 then begin
+         if z1 ge 0.75 and z2 le 1.15 then begin
              ok=where(bcg[x].gm_imz ne 0)
              x=x[ok]
              alpha=[median(bcg[x].gm_mix_imz_clr),median(bcg[x].gm_mix_imz_bgd)]
@@ -32,7 +32,17 @@ function gmmridgeplot,bcg,z1,z2
              gmmplot,alpha,mu,sigma,xrange=[-0.5,2],npoint=20000,xtitle='i-z',charsize=2
              legend,['z: '+ntostr(z1,5)+' - '+ntostr(z2,5)],box=0,charsize=2
          endif 
-
+          
+          if z1 ge 1.15 and z2 le 1.4 then begin
+             ok=where(bcg[x].gm_zmy ne 0)
+             x=x[ok]
+             alpha=[median(bcg[x].gm_mix_zmy_clr),median(bcg[x].gm_mix_zmy_bgd)]
+             mu=[mean(bcg[x].gm_zmy),mean(bcg[x].gm_zmy_bgd)]
+             sigma=[mean(bcg[x].gm_zmy_wdh),mean(bcg[x].gm_zmy_wdh_bgd)]
+             gmmplot,alpha,mu,sigma,xrange=[-0.5,2],npoint=20000,xtitle='z-y',charsize=2
+             legend,['z: '+ntostr(z1,5)+' - '+ntostr(z2,5)],box=0,charsize=2
+         endif 
+          
          return,0
 end
 
@@ -49,8 +59,8 @@ pro color_ridgeline,bcg
    ; bcg=mrdfits('/data/des_mock_catalog/v2.11/gmbcg_cluster/arborz/des_mock_v2.10_BCG_blended_gmbcg_v2.5.fit',1)
 
   ; bcg=mrdfits('/data/des_dc5/DC5B2/gmbcg_cluster/galaxy/des_mock_v2.10_BCG_blended_gmbcg_v2.5.fit',1)
-   bcg=mrdfits('/data/des_dc5/DC5B2/gmbcg_cluster/truth/des_mock_v2.10_BCG_blended_gmbcg_v2.5.fit',1)
- 
+  ; bcg=mrdfits('/data/des_dc5/DC5B2/gmbcg_cluster/truth/des_mock_v2.10_BCG_blended_gmbcg_v2.5.fit',1)
+   bcg = mrdfits('/data/des_mock_catalog/v3.04/clusterCat/des_mock_v1.00_BCG_gmbcg_v2.5.fit',1) 
     bcg=bcg[where(bcg.gm_nn eq 2 and bcg.ngals ge 8)]
     !p.multi=[0,3,4]
     window,xsize=1000,ysize=1100
