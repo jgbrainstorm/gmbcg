@@ -17,7 +17,7 @@ function nfw,r
     lt1= where(x lt 1)
     resf[lt1] = 1-2./sqrt(1-x[lt1]^2)*atanh(sqrt((1-x[lt1])/(x[lt1]+1)))
     gt1= where(x gt 1)
-    resf[gt1] = 1-2./sqrt(x[gt1]^2-1)*np.atanh(sqrt((x[gt1]-1)/(x[gt1]+1)))
+    resf[gt1] = 1-2./sqrt(x[gt1]^2-1)*atanh(sqrt((x[gt1]-1)/(x[gt1]+1)))
     eq1= where(x eq 1)
     resf[eq1] = 0.
     res=2*rhos*rs/(x^2-1)*resf*r
@@ -79,7 +79,7 @@ function sigma1new,c,delta,r,w1,w2,mu1,mu2,sigma1,sigma2
 end
 
 
-function sigma2new,c,delta,r,w1,w2,mu1,mu2,sigma1,sigma2):
+function sigma2new,c,delta,r,w1,w2,mu1,mu2,sigma1,sigma2
     upper=total((c-mu2)^2*pz2(c,delta,r,w1,w2,mu1,mu2,sigma1,sigma2)*sigma2^2/(sigma2^2+delta^2)^2)
     lower=total(pz2(c,delta,r,w1,w2,mu1,mu2,sigma1,sigma2)*sigma2^2/(sigma2^2+delta^2)^2)
     res=sqrt(upper/lower)
@@ -188,8 +188,9 @@ pro aic2EM,c,delta,r,alpha,mu,sigma,AIC
     return
 end
 
-pro rwecgmm
+pro rwecgmm,c,delta,r,alpha,mu,sigma,aic2,aic1
 
-    print, 'loaded'
-
+    aic2EM,c,delta,r,alpha,mu,sigma,aic2
+    aic1EM,c,delta,r,aic1,mu1,sigma1
+    return
 end
