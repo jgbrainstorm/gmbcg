@@ -6,48 +6,22 @@ J. Hao @ Fermilab
 
 from gmbcgFinder import *
 
-class Gal:
-    def __init__(self):
-        self.ID = None
-        self.childID = None
-        self.alpha = None
-        self.mu = None
-        self.sigma = None
-        self.rich = None
-        self.bic1 = None
-        self.bic2 = None
- 
-#-----0.4L* in i-band ---------
-def limi(x):
-    A=np.exp(3.1638)
-    k=0.1428
-    lmi=A*x**k
-    return(lmi)
-
-#-----0.4L* in z-band ---------
-def limz(x):
-    """
-    corresponding i_absmag <= -20.5 
-    """
-    A=np.exp(3.17)
-    k=0.15
-    lmz=A*x**k
-    return(lmz)
 
 
 #-----setup catalog directories---
-InputCatDir = '/home/jghao/research/des_mock/collrunJun2011'
+InputCatDir = '/home/jghao/research/data/des_mock/v3.04/obsCat/'
 OutputCatDir = 'output dir'
 
-galF = gl.glob(InputCatDir+'/*.fit')
+galF = gl.glob(InputCatDir+'*.fit')
 NF = len(galF)
 
+#----read in file and prepare the input variable -----
 i=0
 cat=pf.getdata(galF[i],1)
-central = cat.field('central')
+#central = cat.field('central')
 ra=cat.field('ra')
 dec=cat.field('dec')
-photoz=cat.field('z')
+photoz=cat.field('PHOTOZ_GAUSSIAN')
 mag=cat.field('mag_z')
 gmr=cat.field('mag_g') - cat.field('mag_r')
 gmrErr=np.sqrt(cat.field('magerr_g')**2+cat.field('magerr_r')**2)
@@ -59,6 +33,8 @@ zmy=cat.field('mag_z') - cat.field('mag_y')
 zmyErr=np.sqrt(cat.field('magerr_z')**2+cat.field('magerr_y')**2)
 objID=cat.field('id')
 Idx=np.arange(len(ra))
-bcgCandidateIdx = Idx[central == 1]
 
-galObj=[objID,gmr,gmrErr,rmi,rmiErr,imz,imzErr,mag,photoz,ra,dec,Idx]
+bcgCandidateIdx = selectBCGcandidate(photoz,gmr,rmi,imz,zmy)
+
+grCandIdx = bcgCandidateIdx[photoz[bcgCandidateIdx] < 0.4]
+res= gmbcgFinder(objID=objID,ra=ra, dec=dec, photoz=photoz,color=gmr,colorErr=gmrErr,mag=mag,bcgCandidateIdx=grCandIdx)
