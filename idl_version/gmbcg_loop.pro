@@ -5,16 +5,16 @@ pro gmbcg_loop,input_dir,cat_dir,radius,truth=truth
     version = 3.04
    ; if keyword_set(truth) then file=findfile(input_dir+'DES_Mock_v2.13_Baseline_truth*.fit') else file=findfile(input_dir+'DES_Mock_v2.13_Baseline_0*.fit')  
     file=findfile(input_dir+'*.fit')
-    for patch=0,n_elements(file)-1 do begin
-        print,patch
-        
+    ;for patch=0,n_elements(file)-1 do begin
+    for patch = 0, 1 do begin
+        print,patch        
         catch,error_status
         if error_status ne 0 then exit
         gal=mrdfits(file[patch],1)
         catch,/cancel
 
         num=n_elements(gal.(0))
-        tt=create_struct('objid',long64(0),'ra',0.D,'dec',0.D,'amag',[0.,0.,0.,0.,0.],'tmag',[0.,0.,0.,0.,0.],'omag',[0.,0.,0.,0.,0.],'omag_err',[0.,0.,0.,0.,0.],'z',0.,'photoz',0.,'photoz_err',0.,'gmr',0.,'rmi',0.,'imz',0.,'zmy',0.,'gmr_err',0.,'rmi_err',0.,'imz_err',0.,'zmy_err',0.,'gm_gmr',0.,'gm_gmr_wdh',0.,'gm_rmi',0.,'gm_rmi_wdh',0.,'gm_imz',0.,'gm_imz_wdh',0.,'gm_zmy',0.,'gm_zmy_wdh',0.,'gr_ridge',0,'ri_ridge',0,'iz_ridge',0,'zy_ridge',0,'nfw_lh',0.,'bcgmag_lh',0.,'used',0,'rcenter',0.,'bcg_gr_lh',0.,'bcg_ri_lh',0.,'bcg_iz_lh',0.,'lh',0.,'bcglh',0.,'GM_NN',0,'ngals',0,'ngals_r200',0,'central',0,'arborz',0.,'arborz_err',0.,'annz',0.,'annz_err',0.,'photoz_gaussian',0.,'gm_mix_gmr_clr',0.,'gm_mix_gmr_bgd',0.,'gm_mix_rmi_clr',0.,'gm_mix_rmi_bgd',0.,'gm_mix_imz_clr',0.,'gm_mix_imz_bgd',0.,'gm_mix_zmy_clr',0.,'gm_mix_zmy_bgd',0.,'isbcg',0.,'GM_gmr_bgd',0.,'GM_gmr_wdh_bgd',0.,'GM_rmi_bgd',0.,'GM_rmi_wdh_bgd',0.,'GM_imz_bgd',0.,'GM_imz_wdh_bgd',0.,'GM_zmy_bgd',0.,'GM_zmy_wdh_bgd',0.,'lim_i',0.,'Ntot',0.,'GM_Ngals_weighted',0.,'BIC1',0.,'BIC2',0.)
+        tt=create_struct('objid',long64(0),'ra',0.D,'dec',0.D,'amag',[0.,0.,0.,0.,0.],'tmag',[0.,0.,0.,0.,0.],'omag',[0.,0.,0.,0.,0.],'omag_err',[0.,0.,0.,0.,0.],'z',0.,'photoz',0.,'photoz_err',0.,'gmr',0.,'rmi',0.,'imz',0.,'zmy',0.,'gmr_err',0.,'rmi_err',0.,'imz_err',0.,'zmy_err',0.,'gm_gmr',0.,'gm_gmr_wdh',0.,'gm_rmi',0.,'gm_rmi_wdh',0.,'gm_imz',0.,'gm_imz_wdh',0.,'gm_zmy',0.,'gm_zmy_wdh',0.,'gr_ridge',0,'ri_ridge',0,'iz_ridge',0,'zy_ridge',0,'nfw_lh',0.,'bcgmag_lh',0.,'used',0,'rcenter',0.,'bcg_gr_lh',0.,'bcg_ri_lh',0.,'bcg_iz_lh',0.,'lh',0.,'bcglh',0.,'GM_NN',0,'ngals',0,'ngals_r200',0,'central',0,'arborz',0.,'arborz_err',0.,'annz',0.,'annz_err',0.,'photoz_gaussian',0.,'gm_mix_gmr_clr',0.,'gm_mix_gmr_bgd',0.,'gm_mix_rmi_clr',0.,'gm_mix_rmi_bgd',0.,'gm_mix_imz_clr',0.,'gm_mix_imz_bgd',0.,'gm_mix_zmy_clr',0.,'gm_mix_zmy_bgd',0.,'isbcg',0.,'GM_gmr_bgd',0.,'GM_gmr_wdh_bgd',0.,'GM_rmi_bgd',0.,'GM_rmi_wdh_bgd',0.,'GM_imz_bgd',0.,'GM_imz_wdh_bgd',0.,'GM_zmy_bgd',0.,'GM_zmy_wdh_bgd',0.,'lim_i',0.,'Ntot',0.,'GM_Ngals_weighted',0.,'AIC1',0.,'AIC2',0.,'z_ridge',0.)
         str=replicate(tt,n_elements(gal.(0)))
         str.objid = gal.id
         if keyword_set(truth) then begin
@@ -62,7 +62,7 @@ pro gmbcg_loop,input_dir,cat_dir,radius,truth=truth
         str.lim_i=limi(str.photoz)
         ;gal=str[where(str.photoz ge 0.1 and str.photoz le 1.0)]
         gal = str   
-        des_mock_gmbcg_new_new,cat_dir,gal,radius,patch,version
+        des_mock_rwgmbcg,cat_dir,gal,radius,patch,version
         catch,error_status
         if error_status ne 0 then exit
     

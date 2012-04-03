@@ -2,6 +2,6 @@
 # you need to specify input catalog directory and output catalog directory
 # Note: do not allow extra space when you replace the directories.
 inputdir=/data/des_mock_catalog/v3.04/obsCat/
-catdir=/data/des_mock_catalog/v3.04/clusterCat/
+catdir=/data/des_mock_catalog/v3.04/clusterCat/test/
 radius=1.0
 truth=0
