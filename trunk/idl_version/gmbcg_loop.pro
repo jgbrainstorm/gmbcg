@@ -61,8 +61,9 @@ pro gmbcg_loop,input_dir,cat_dir,radius,truth=truth
         ;str.lim_i=vlmti(str.photoz)
         str.lim_i=limi(str.photoz)
         ;gal=str[where(str.photoz ge 0.1 and str.photoz le 1.0)]
-        gal = str   
-        des_mock_rwgmbcg,cat_dir,gal,radius,patch,version
+        gal = str 
+        des_mock_gmbcg_new_new,cat_dir,gal,radius,patch,version
+        ;des_mock_rwgmbcg,cat_dir,gal,radius,patch,version
         catch,error_status
         if error_status ne 0 then exit
     
@@ -85,6 +86,8 @@ pro gmbcg_loop,input_dir,cat_dir,radius,truth=truth
     gmbcg_des_member_combine,cat_dir,version
     catch,/cancel
   
-
-
+    catch,error_status
+    if error_status ne 0 then exit
+    gmbcg_des_member_combine,cat_dir,version
+    catch,/cancel
 end
