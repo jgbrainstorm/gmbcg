@@ -5,13 +5,12 @@ J. Hao @ Fermilab
 """
 
 from gmbcgFinder import *
-
-
+import cPickle as p
 
 #-----setup catalog directories---
-InputCatDir = '/home/jghao/research/data/des_mock/v3.04/obsCat/'
-TruCatDir = '/home/jghao/research/data/des_mock/v3.04/truthCat/'
-OutputCatDir = 'output dir'
+InputCatDir = '/home/jghao/research/data/des_mock/v4.00/obsCat/'
+TruCatDir = '/home/jghao/research/data/des_mock/v4.00/truthCat/'
+OutputCatDir = '/home/jghao/research/data/des_mock/v4.00/truthCat/clusterCat/'
 
 TruGalF = gl.glob(TruCatDir+'*.fit')
 TruGalF.sort()
@@ -24,6 +23,8 @@ Truth = 0
 #----read in file and prepare the input variable -----
 i=0
 cat=pf.getdata(galF[i],1)
+ok = cat.field('PHOTOZ_GAUSSIAN') <= 0.65
+cat = cat[ok]
 central = pf.getdata(TruGalF[i],1).field('central')
 
 ra=cat.field('ra')

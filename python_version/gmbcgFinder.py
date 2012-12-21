@@ -6,6 +6,7 @@ This define the GMBCG finder for individual catalog
 import numpy as np
 import pyfits as pf
 import pylab as pl
+import healpy as hp
 import esutil as es
 import ecgmmPy as gmm
 import rwecgmmPy as rwgmm
@@ -134,7 +135,7 @@ def gmbcgFinder(objID=None,ra=None, dec=None, photoz=None,color=None,colorErr=No
     h,rev = es.stat.histogram(m1, binsize=1, rev=True)
     startTime=time.time()
     for i in range(h.size):
-        if rev[i] != rev[i+1]:
+        if rev[i] < rev[i+1]:
             print i
             indx = rev[ rev[i]:rev[i+1]]
             alpha=np.array([0.5,0.5])
@@ -144,8 +145,8 @@ def gmbcgFinder(objID=None,ra=None, dec=None, photoz=None,color=None,colorErr=No
             aic1 = rwgmm.aic1EM(color[m2[indx]],colorErr[m2[indx]],r12[indx])[0]
             if aic2 < aic1:
                 srt=np.argsort(sigma)
-                BCGIdx.append(m1[indx[0]])
-                BCGobjID.append(objID[m1[indx[0]]])
+                BCGIdx.append(bcgCandidateIdx[m1[indx[0]]])
+                BCGobjID.append(objID[bcgCandidateIdx[m1[indx[0]]]])
                 BCGalpha0.append(alpha[srt[0]])
                 BCGalpha1.append(alpha[srt[1]])
                 BCGmu0.append(mu[srt[0]])
@@ -155,6 +156,31 @@ def gmbcgFinder(objID=None,ra=None, dec=None, photoz=None,color=None,colorErr=No
                 BCGaic1.append(aic1)
                 BCGaic2.append(aic2)
                 BCGamp.append(len(indx)*alpha[srt[0]]) 
+            else:
+                BCGIdx.append(bcgCandidateIdx[m1[indx[0]]])
+                BCGobjID.append(objID[bcgCandidateIdx[m1[indx[0]]]])
+                BCGalpha0.append(-999)
+                BCGalpha1.append(-999)
+                BCGmu0.append(-999)
+                BCGmu1.append(-999)
+                BCGsigma0.append(-999)
+                BCGsigma1.append(-999)
+                BCGaic1.append(-999)
+                BCGaic2.append(-999)
+                BCGamp.append(-999)  
+        elif rev[i] == rev[i+1]:
+            indx = rev[ rev[i]]
+            BCGIdx.append(bcgCandidateIdx[m1[indx]])
+            BCGobjID.append(objID[bcgCandidateIdx[m1[indx]]])
+            BCGalpha0.append(-999)
+            BCGalpha1.append(-999)
+            BCGmu0.append(-999)
+            BCGmu1.append(-999)
+            BCGsigma0.append(-999)
+            BCGsigma1.append(-999)
+            BCGaic1.append(-999)
+            BCGaic2.append(-999)
+            BCGamp.append(-999) 
     endTime=time.time()
     elapseTime=endTime-startTime
     print '---elapsed time: ' + str(elapseTime)
